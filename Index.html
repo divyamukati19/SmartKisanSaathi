@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SmartKisanSaathi</title>
+<style>
+body{font-family:Arial;background:#e8f5e9;margin:0;padding:15px}
+h1{text-align:center;color:#2e7d32}
+.card{background:white;padding:15px;border-radius:12px;margin:12px 0;box-shadow:0 2px 8px #ccc}
+button{background:#2e7d32;color:white;border:none;padding:10px 15px;border-radius:8px;width:100%;font-size:16px}
+input,select{width:100%;padding:10px;margin:8px 0;border:1px solid #ccc;border-radius:8px}
+</style>
+</head>
+<body>
+<h1>🌾 SmartKisanSaathi</h1>
+<p style="text-align:center">Kisan ka Smart Saathi</p>
+
+<div class="card">
+<h2>🌦️ Aaj ka Mausam</h2>
+<p>Dhamnod, MP - Dhoop, 28°C</p>
+<p>Baarish ki sambhavna: 10%</p>
+<p>Salah: Aaj sinchai ke liye achha din hai.</p>
+</div>
+
+<div class="card">
+<h2>💰 Aaj ke Mandi Bhav</h2>
+<p>Gehu: ₹2,750 / Quintal</p>
+<p>Soyabean: ₹4,850 / Quintal</p>
+<p>Kapass: ₹7,100 / Quintal</p>
+<p>Makka: ₹2,250 / Quintal</p>
+</div>
+
+<div class="card">
+<h2>🌱 Fasal Salah</h2>
+<select id="fasal">
+<option>Gehu</option>
+<option>Soyabean</option>
+<option>Kapass</option>
+<option>Makka</option>
+</select>
+<button onclick="salah()">Salah Dekho</button>
+<p id="result"></p>
+</div>
+
+<script>
+function salah(){
+let f=document.getElementById("fasal").value;
+let r="";
+if(f=="Gehu") r="Gehu ke liye samay par paani de, urea ka chhidkav kare.";
+if(f=="Soyabean") r="Soyabean me keet se bachav ke liye neem ka tel chhidke.";
+if(f=="Kapass") r="Kapass me gulabi sundi se bachav ke liye jaanch karte rahe.";
+if(f=="Makka") r="Makka ko nमी se bachaye, khad samay par de.";
+document.getElementById("result").innerText=r;
+}
+</script>
+</body>
+</html>
