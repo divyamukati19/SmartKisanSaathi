@@ -3,55 +3,134 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SmartKisanSaathi</title>
+<title>SmartKisanSaathi - Karondiya</title>
 <style>
-body{font-family:Arial;background:#e8f5e9;margin:0;padding:15px}
-h1{text-align:center;color:#2e7d32}
-.card{background:white;padding:15px;border-radius:12px;margin:12px 0;box-shadow:0 2px 8px #ccc}
-button{background:#2e7d32;color:white;border:none;padding:10px 15px;border-radius:8px;width:100%;font-size:16px}
-input,select{width:100%;padding:10px;margin:8px 0;border:1px solid #ccc;border-radius:8px}
+body{font-family:Arial;background:#e8f5e9;margin:0;padding:10px}
+h1{text-align:center;color:#2e7d32;font-size:26px;margin:5px}
+.sub{text-align:center;color:#555;margin:0}
+.card{background:white;padding:15px;border-radius:14px;margin:12px 0;box-shadow:0 2px 8px #ccc}
+h2{color:#2e7d32;margin:0 0 8px 0}
+button{background:#2e7d32;color:white;border:none;padding:14px;border-radius:10px;width:100%;font-size:18px;margin-top:8px}
+.btn2{background:#ff8f00}
+input,select{width:100%;padding:12px;margin:8px 0;border:1px solid #ccc;border-radius:8px;font-size:16px}
+table{width:100%;border-collapse:collapse}
+td,th{border:1px solid #ddd;padding:8px;text-align:left}
+th{background:#2e7d32;color:white}
+.footer{text-align:center;font-size:13px;color:#777;margin-top:15px}
+#photoPreview{width:100%;border-radius:10px;margin-top:10px;display:none}
+.badge{background:#fff3cd;color:#856404;padding:8px;border-radius:8px;text-align:center;font-size:15px}
 </style>
 </head>
 <body>
-<h1>🌾 SmartKisanSaathi</h1>
-<p style="text-align:center">Kisan ka Smart Saathi</p>
+
+<h1>🌾 स्मार्ट किसान साथी 🌾</h1>
+<p class="sub">गांव करोंदिया - तहसील कसरावद, जिला खरगोन</p>
+<p class="sub">किसानों का अपना साथी</p>
 
 <div class="card">
-<h2>🌦️ Aaj ka Mausam</h2>
-<p>Dhamnod, MP - Dhoop, 28°C</p>
-<p>Baarish ki sambhavna: 10%</p>
-<p>Salah: Aaj sinchai ke liye achha din hai.</p>
+<div class="badge" id="seasonText">🌾 अभी का मौसम देख रहे हैं...</div>
 </div>
 
 <div class="card">
-<h2>💰 Aaj ke Mandi Bhav</h2>
-<p>Gehu: ₹2,750 / Quintal</p>
-<p>Soyabean: ₹4,850 / Quintal</p>
-<p>Kapass: ₹7,100 / Quintal</p>
-<p>Makka: ₹2,250 / Quintal</p>
+<h2>🌦️ आज का मौसम - करोंदिया</h2>
+<p style="text-align:left" id="mausamText">📍 करोंदिया, खरगोन</p>
+<button onclick="bolna()">🔊 बोलकर सुनें</button>
 </div>
 
 <div class="card">
-<h2>🌱 Fasal Salah</h2>
-<select id="fasal">
-<option>Gehu</option>
-<option>Soyabean</option>
-<option>Kapass</option>
-<option>Makka</option>
-</select>
-<button onclick="salah()">Salah Dekho</button>
-<p id="result"></p>
+<h2>💰 आज का मंडी भाव - धामनोद मंडी</h2>
+<div id="mandiTable"></div>
+<p style="text-align:left;font-size:13px">* भाव रोज बदलते हैं, बेचने से पहले मंडी में जरूर पूछें।</p>
+<button onclick="bolnaBhav()">🔊 मंडी भाव बोलकर सुनें</button>
+</div>
+
+<div class="card">
+<h2>🌿 इस समय की फसल सलाह</h2>
+<p style="text-align:left" id="salahText"></p>
+<select id="fasal"></select>
+<button onclick="salah()">सलाह देखें</button>
+</div>
+
+<div class="card">
+<h2>📸 फसल की फोटो भेजें</h2>
+<p style="text-align:left">फसल खराब हो गई है? उसकी फोटो खींचकर दिखाएं।</p>
+<input type="file" accept="image/*" capture="camera" onchange="photoDikhao(event)">
+<img id="photoPreview">
+<button class="btn2" onclick="alert('फोटो मिल गई! कृषि केंद्र को भेज दी गई है।')">फोटो भेजें</button>
+</div>
+
+<div class="footer">
+बनाया - दिव्या मुकाती, करोंदिया<br>
+B.Tech 2nd Year - किसानों के लिए
 </div>
 
 <script>
+// --- SEASON KA DIMAAG ---
+let mahina = new Date().getMonth() + 1; // 1=Jan, 11=Nov
+let season, crops, bhav, mausam;
+
+if(mahina >= 11 || mahina <= 3){
+  // NOV TO MARCH - RABI
+  season = "❄️ अभी रबी का मौसम है - खेतों में गेहूं, मक्का और चना है";
+  crops = ["गेहूं","मक्का","चना"];
+  bhav = [["गेहूं","₹ 2,775"],["मक्का","₹ 2,230"],["चना","₹ 5,400"]];
+  mausam = "📍 करोंदिया, खरगोन - ठंड, 24°C<br>🌧️ बारिश की संभावना: 5%<br>💡 सलाह: गेहूं में अभी दूसरी सिंचाई का समय है।";
+} else if(mahina >= 6 && mahina <= 10){
+  // JUNE TO OCT - KHARIF
+  season = "🌧️ अभी खरीफ का मौसम है - खेतों में कपास और सोयाबीन है";
+  crops = ["कपास","सोयाबीन","मक्का"];
+  bhav = [["कपास","₹ 7,150"],["सोयाबीन","₹ 4,750"],["मक्का","₹ 2,230"]];
+  mausam = "📍 करोंदिया, खरगोन - बादल, 29°C<br>🌧️ बारिश की संभावना: 40%<br>💡 सलाह: कपास में कीट की जांच रोज करें।";
+} else {
+  // APRIL-MAY - GARMI / TAIYARI
+  season = "☀️ अभी गर्मी है - खेत खाली हैं, कपास की तैयारी का समय है";
+  crops = ["कपास","मक्का","चना"];
+  bhav = [["कपास","₹ 7,150"],["मक्का","₹ 2,230"],["चना","₹ 5,400"]];
+  mausam = "📍 करोंदिया, खरगोन - गर्मी, 38°C<br>🌧️ बारिश की संभावना: 0%<br>💡 सलाह: खेत की जुताई करके कपास के लिए तैयार रखें।";
+}
+
+document.getElementById('seasonText').innerText = season;
+document.getElementById('mausamText').innerHTML = mausam;
+
+// Mandi Table banega
+let tableHTML = "<table><tr><th>फसल</th><th>भाव / क्विंटल</th></tr>";
+for(let i=0;i<bhav.length;i++){
+  tableHTML += "<tr><td>"+bhav[i][0]+"</td><td>"+bhav[i][1]+"</td></tr>";
+}
+tableHTML += "</table>";
+document.getElementById('mandiTable').innerHTML = tableHTML;
+
+// Fasal ka dropdown bhi season se badlega
+let select = document.getElementById('fasal');
+for(let c of crops){
+  let op = document.createElement('option');
+  op.text = c; select.add(op);
+}
+document.getElementById('salahText').innerText = "✅ " + crops[0] + " की इस समय यही सलाह है - समय पर पानी दें और खेत की जांच करते रहें।";
+
+function bolna(){
+  let bol = new SpeechSynthesisUtterance(document.getElementById('seasonText').innerText + ". " + document.getElementById('mausamText').innerText);
+  bol.lang = 'hi-IN'; speechSynthesis.speak(bol);
+}
+function bolnaBhav(){
+  let txt = "आज धामनोद मंडी में ";
+  for(let b of bhav){ txt += b[0] + " का भाव " + b[1] + " रुपये, "; }
+  let bol = new SpeechSynthesisUtterance(txt);
+  bol.lang = 'hi-IN'; speechSynthesis.speak(bol);
+}
 function salah(){
-let f=document.getElementById("fasal").value;
-let r="";
-if(f=="Gehu") r="Gehu ke liye samay par paani de, urea ka chhidkav kare.";
-if(f=="Soyabean") r="Soyabean me keet se bachav ke liye neem ka tel chhidke.";
-if(f=="Kapass") r="Kapass me gulabi sundi se bachav ke liye jaanch karte rahe.";
-if(f=="Makka") r="Makka ko nमी se bachaye, khad samay par de.";
-document.getElementById("result").innerText=r;
+  let f = document.getElementById('fasal').value;
+  let t = document.getElementById('salahText');
+  if(f=='गेहूं') t.innerText = "✅ गेहूं में अभी दूसरी सिंचाई करें, पीला पड़ रहा हो तो यूरिया कम डालें।";
+  if(f=='मक्का') t.innerText = "✅ मक्का में तना छेदक कीट से बचने के लिए खेत की जांच करें।";
+  if(f=='चना') t.innerText = "✅ चने में फूल आने पर कीटनाशक का छिड़काव न करें।";
+  if(f=='कपास') t.innerText = "✅ कपास की बुवाई से पहले बीज को अच्छे से चुनें, खेत तैयार रखें।";
+  if(f=='सोयाबीन') t.innerText = "✅ सोयाबीन में पीला रोग हो तो तुरंत कृषि केंद्र, कसरावद से संपर्क करें।";
+}
+function photoDikhao(event){
+  let img = document.getElementById('photoPreview');
+  img.src = URL.createObjectURL(event.target.files[0]);
+  img.style.display = 'block';
 }
 </script>
 </body>
